@@ -1,33 +1,42 @@
 const state = {
   clinics: [],
-  selectedImages: [], // File[]
+  selectedImages: [], // [{ name, dataUri }]
 };
 
 // ---------- Helpers ----------
 
-async function api(url, options = {}) {
-  const res = await fetch(url, options);
-  if (!res.ok) {
-    let message = 'Erro na requisição';
-    try {
-      const data = await res.json();
-      message = data.error || message;
-    } catch (_) {}
-    throw new Error(message);
-  }
-  if (res.status === 204) return null;
-  return res.json();
+function escapeHtml(str = '') {
+  const div = document.createElement('div');
+  div.textContent = str;
+  return div.innerHTML;
 }
 
 function fmtDate(iso) {
-  const d = new Date(iso.replace(' ', 'T') + 'Z');
-  return d.toLocaleString('pt-BR');
+  return new Date(iso).toLocaleString('pt-BR');
+}
+
+function fileToDataUri(file) {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = () => resolve(reader.result);
+    reader.onerror = reject;
+    reader.readAsDataURL(file);
+  });
+}
+
+function slugify(str = '') {
+  return str
+    .normalize('NFD')
+    .replace(/[̀-ͯ]/g, '')
+    .replace(/[^a-zA-Z0-9]+/g, '-')
+    .replace(/(^-|-$)/g, '')
+    .toLowerCase() || 'relatorio';
 }
 
 // ---------- Clínicas ----------
 
 async function loadClinics() {
-  state.clinics = await api('/api/clinicas');
+  state.clinics = await DB.getAllClinicas();
   renderClinicSelect();
   renderClinicTable();
 }
@@ -72,12 +81,6 @@ function renderClinicTable() {
   });
 }
 
-function escapeHtml(str = '') {
-  const div = document.createElement('div');
-  div.textContent = str;
-  return div.innerHTML;
-}
-
 function startEditClinic(id) {
   const c = state.clinics.find((x) => String(x.id) === String(id));
   if (!c) return;
@@ -99,7 +102,7 @@ function resetClinicForm() {
 
 async function deleteClinic(id) {
   if (!confirm('Excluir esta clínica?')) return;
-  await api(`/api/clinicas/${id}`, { method: 'DELETE' });
+  await DB.deleteClinica(id);
   await loadClinics();
 }
 
@@ -113,17 +116,9 @@ document.getElementById('clinic-form').addEventListener('submit', async (e) => {
     endereco: document.getElementById('cf-endereco').value.trim(),
   };
   if (id) {
-    await api(`/api/clinicas/${id}`, {
-      method: 'PUT',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(payload),
-    });
+    await DB.updateClinica(id, payload);
   } else {
-    await api('/api/clinicas', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(payload),
-    });
+    await DB.addClinica(payload);
   }
   resetClinicForm();
   await loadClinics();
@@ -155,19 +150,22 @@ document.getElementById('clinic-modal').addEventListener('click', (e) => {
 
 // ---------- Imagens ----------
 
-document.getElementById('imagens').addEventListener('change', (e) => {
-  state.selectedImages = Array.from(e.target.files);
+document.getElementById('imagens').addEventListener('change', async (e) => {
+  const files = Array.from(e.target.files);
+  state.selectedImages = await Promise.all(
+    files.map(async (file) => ({ name: file.name, dataUri: await fileToDataUri(file) }))
+  );
   renderImagePreview();
 });
 
 function renderImagePreview() {
   const wrap = document.getElementById('image-preview');
   wrap.innerHTML = '';
-  state.selectedImages.forEach((file, idx) => {
+  state.selectedImages.forEach((img, idx) => {
     const div = document.createElement('div');
     div.className = 'thumb';
-    const img = document.createElement('img');
-    img.src = URL.createObjectURL(file);
+    const imgEl = document.createElement('img');
+    imgEl.src = img.dataUri;
     const btn = document.createElement('button');
     btn.type = 'button';
     btn.className = 'remove';
@@ -176,16 +174,52 @@ function renderImagePreview() {
       state.selectedImages.splice(idx, 1);
       renderImagePreview();
     });
-    div.appendChild(img);
+    div.appendChild(imgEl);
     div.appendChild(btn);
     wrap.appendChild(div);
   });
 }
 
-// ---------- Relatórios ----------
+// ---------- Geração de PDF (100% no navegador) ----------
+
+function waitImagesLoaded(root) {
+  const imgs = Array.from(root.querySelectorAll('img'));
+  return Promise.all(
+    imgs.map((img) =>
+      img.complete ? Promise.resolve() : new Promise((resolve) => {
+        img.onload = resolve;
+        img.onerror = resolve;
+      })
+    )
+  );
+}
+
+async function gerarPdf(data) {
+  const container = document.getElementById('pdf-render-root');
+  container.innerHTML = renderReportHtml(data);
+  await waitImagesLoaded(container);
+
+  const filename = `relatorio-${slugify(data.paciente)}-${Date.now()}.pdf`;
+
+  await html2pdf()
+    .set({
+      margin: 0,
+      filename,
+      image: { type: 'jpeg', quality: 0.95 },
+      html2canvas: { scale: 2.5, useCORS: true, backgroundColor: '#ffffff' },
+      jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' },
+      pagebreak: { mode: ['css', 'legacy'] },
+    })
+    .from(container.firstElementChild)
+    .save();
+
+  container.innerHTML = '';
+}
+
+// ---------- Relatórios (histórico local) ----------
 
 async function loadReports() {
-  const reports = await api('/api/relatorios');
+  const reports = await DB.getAllRelatorios();
   const list = document.getElementById('reports-list');
   if (reports.length === 0) {
     list.innerHTML = '<p class="empty-hint">Nenhum relatório gerado ainda.</p>';
@@ -200,9 +234,41 @@ async function loadReports() {
         <strong>${escapeHtml(r.paciente)}</strong> — ${escapeHtml(r.nome_clinica)}
         <div class="meta">${fmtDate(r.criado_em)}</div>
       </div>
-      <a href="/reports-files/${r.arquivo_pdf}" target="_blank" rel="noopener">Baixar PDF</a>
+      <div class="actions">
+        <button type="button" class="link-btn" data-download="${r.id}">Baixar novamente</button>
+        <button type="button" class="link-btn del" data-del-report="${r.id}">Excluir</button>
+      </div>
     `;
     list.appendChild(div);
+  });
+
+  list.querySelectorAll('[data-download]').forEach((btn) => {
+    btn.addEventListener('click', async () => {
+      const r = reports.find((x) => String(x.id) === btn.dataset.download);
+      if (!r) return;
+      btn.disabled = true;
+      btn.textContent = 'Gerando...';
+      try {
+        await gerarPdf({
+          nomeClinica: r.nome_clinica,
+          responsavel: r.responsavel,
+          paciente: r.paciente,
+          descricao: r.descricao,
+          imagens: r.imagens,
+        });
+      } finally {
+        btn.disabled = false;
+        btn.textContent = 'Baixar novamente';
+      }
+    });
+  });
+
+  list.querySelectorAll('[data-del-report]').forEach((btn) => {
+    btn.addEventListener('click', async () => {
+      if (!confirm('Excluir este relatório do histórico?')) return;
+      await DB.deleteRelatorio(btn.dataset.delReport);
+      await loadReports();
+    });
   });
 }
 
@@ -211,24 +277,35 @@ document.getElementById('report-form').addEventListener('submit', async (e) => {
   const errorBox = document.getElementById('form-error');
   errorBox.hidden = true;
   const btn = document.getElementById('btn-generate');
+
+  const nomeClinica = document.getElementById('nome_clinica').value.trim();
+  const responsavel = document.getElementById('responsavel').value.trim();
+  const paciente = document.getElementById('paciente').value.trim();
+  const descricao = document.getElementById('descricao').value;
+
+  if (!nomeClinica || !responsavel || !paciente) {
+    errorBox.textContent = 'Preencha ao menos a clínica, o(a) responsável e o paciente.';
+    errorBox.hidden = false;
+    return;
+  }
+
   btn.disabled = true;
   btn.textContent = 'Gerando PDF...';
 
   try {
-    const formData = new FormData();
-    const clinicSelect = document.getElementById('clinic-select');
-    if (clinicSelect.value) formData.append('clinica_id', clinicSelect.value);
-    formData.append('nome_clinica', document.getElementById('nome_clinica').value.trim());
-    formData.append('responsavel', document.getElementById('responsavel').value.trim());
-    formData.append('paciente', document.getElementById('paciente').value.trim());
-    formData.append('descricao', document.getElementById('descricao').value);
-    state.selectedImages.forEach((file) => formData.append('imagens', file));
-
-    const result = await api('/api/relatorios/gerar', { method: 'POST', body: formData });
-    window.open(result.url, '_blank');
+    const data = { nomeClinica, responsavel, paciente, descricao, imagens: state.selectedImages };
+    await gerarPdf(data);
+    await DB.addRelatorio({
+      nome_clinica: nomeClinica,
+      responsavel,
+      paciente,
+      descricao,
+      imagens: state.selectedImages,
+    });
     await loadReports();
   } catch (err) {
-    errorBox.textContent = err.message;
+    console.error(err);
+    errorBox.textContent = 'Falha ao gerar o PDF: ' + err.message;
     errorBox.hidden = false;
   } finally {
     btn.disabled = false;

@@ -147,6 +147,19 @@ body {
 .report-row .meta { color: var(--gray-text); font-size: 12px; }
 .report-row a { color: var(--navy); font-weight: 600; text-decoration: none; }
 .report-row a:hover { text-decoration: underline; }
+.report-row .actions { display: flex; gap: 14px; flex-shrink: 0; }
+.report-row .link-btn {
+  background: none;
+  border: none;
+  padding: 0;
+  color: var(--navy);
+  font-weight: 600;
+  font-size: 13px;
+  cursor: pointer;
+  font-family: inherit;
+}
+.report-row .link-btn:hover { text-decoration: underline; }
+.report-row .link-btn.del { color: #c0392b; }
 
 /* Modal */
 .modal-overlay {
@@ -190,4 +203,93 @@ body {
   .field-row-2 { grid-template-columns: 1fr; }
   .field-group-header { flex-wrap: wrap; }
   .field-group-header .btn { margin-left: 0; }
+}
+
+/* ==========================================================================
+   Template do relatório em PDF (mesmo layout/cores/logo do modelo original)
+   Renderizado fora da tela e convertido em PDF pelo html2pdf.js
+   ========================================================================== */
+
+#pdf-render-root {
+  position: fixed;
+  top: 0;
+  left: -10000px;
+  z-index: -1;
+  background: #fff;
+}
+
+.rpt-page {
+  width: 210mm;
+  min-height: 297mm;
+  position: relative;
+  background: #ffffff;
+  font-family: 'Segoe UI', Arial, sans-serif;
+  color: #14142b;
+}
+.rpt-header { width: 100%; display: block; }
+.rpt-header img { width: 100%; display: block; }
+.rpt-gold-bar { width: 100%; height: 6mm; background: var(--gold); }
+
+.rpt-content { padding: 10mm 18mm 14mm 18mm; }
+
+.rpt-title-wrap { position: relative; margin-top: 8mm; min-height: 26mm; }
+.rpt-title-accent {
+  position: absolute;
+  left: -18mm;
+  top: 6mm;
+  width: 34mm;
+  height: 12mm;
+  background: var(--gold);
+}
+.rpt-title {
+  position: relative;
+  margin: 0;
+  padding-top: 4mm;
+  font-size: 34pt;
+  font-weight: 800;
+  letter-spacing: 0.5px;
+  color: #0a0a26;
+  line-height: 1.05;
+}
+.rpt-subtitle { position: relative; margin: 0; font-size: 22pt; font-weight: 400; color: #0a0a26; }
+
+.rpt-info-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-top: 10mm;
+  gap: 10mm;
+}
+.rpt-info-block { display: flex; align-items: center; gap: 4mm; flex: 1; }
+.rpt-info-icon { width: 16mm; height: 16mm; flex-shrink: 0; }
+.rpt-info-label {
+  font-size: 8pt;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: #8a8a99;
+  margin: 0 0 1mm 0;
+}
+.rpt-info-value { font-size: 12pt; font-weight: 700; color: #0a0a26; margin: 0; word-break: break-word; }
+.rpt-info-value.rpt-small { font-size: 10pt; font-weight: 400; color: #333349; }
+
+.rpt-divider { border: none; border-top: 1.2px solid #d0d0d5; margin: 8mm 0 6mm 0; }
+.rpt-dotted-divider { border: none; border-top: 2.5px dotted #cfcfd4; margin: 8mm 0 6mm 0; }
+
+.rpt-section-title { font-size: 15pt; font-weight: 800; color: #0a0a26; margin: 0 0 5mm 0; }
+
+.rpt-descricao-box {
+  font-size: 11pt;
+  line-height: 1.6;
+  color: #22222f;
+  white-space: pre-wrap;
+  min-height: 30mm;
+}
+
+.rpt-imagens-wrap { display: flex; flex-wrap: wrap; gap: 4mm; }
+.rpt-report-image {
+  max-width: 100%;
+  width: 100%;
+  max-height: 140mm;
+  object-fit: contain;
+  border: 1px solid #eaeaea;
 }
