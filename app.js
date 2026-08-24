@@ -194,6 +194,42 @@ function waitImagesLoaded(root) {
   );
 }
 
+let currentPreviewUrl = null;
+
+function showPdfPreview(blob, filename) {
+  if (currentPreviewUrl) URL.revokeObjectURL(currentPreviewUrl);
+  currentPreviewUrl = URL.createObjectURL(blob);
+
+  document.getElementById('pdf-preview-frame').src = currentPreviewUrl;
+  document.getElementById('btn-download-preview').dataset.filename = filename;
+  document.getElementById('pdf-preview-modal').hidden = false;
+}
+
+function closePdfPreview() {
+  document.getElementById('pdf-preview-modal').hidden = true;
+  document.getElementById('pdf-preview-frame').src = 'about:blank';
+  if (currentPreviewUrl) {
+    URL.revokeObjectURL(currentPreviewUrl);
+    currentPreviewUrl = null;
+  }
+}
+
+document.getElementById('btn-download-preview').addEventListener('click', (e) => {
+  if (!currentPreviewUrl) return;
+  const a = document.createElement('a');
+  a.href = currentPreviewUrl;
+  a.download = e.currentTarget.dataset.filename || 'relatorio.pdf';
+  document.body.appendChild(a);
+  a.click();
+  a.remove();
+});
+
+document.getElementById('btn-close-pdf-preview').addEventListener('click', closePdfPreview);
+document.getElementById('btn-close-pdf-preview-2').addEventListener('click', closePdfPreview);
+document.getElementById('pdf-preview-modal').addEventListener('click', (e) => {
+  if (e.target.id === 'pdf-preview-modal') closePdfPreview();
+});
+
 async function gerarPdf(data) {
   const container = document.getElementById('pdf-render-root');
   container.innerHTML = renderReportHtml(data);
@@ -201,7 +237,7 @@ async function gerarPdf(data) {
 
   const filename = `relatorio-${slugify(data.paciente)}-${Date.now()}.pdf`;
 
-  await html2pdf()
+  const blob = await html2pdf()
     .set({
       margin: 0,
       filename,
@@ -211,9 +247,10 @@ async function gerarPdf(data) {
       pagebreak: { mode: ['css', 'legacy'] },
     })
     .from(container.firstElementChild)
-    .save();
+    .outputPdf('blob');
 
   container.innerHTML = '';
+  showPdfPreview(blob, filename);
 }
 
 // ---------- Relatórios (histórico local) ----------
@@ -235,7 +272,7 @@ async function loadReports() {
         <div class="meta">${fmtDate(r.criado_em)}</div>
       </div>
       <div class="actions">
-        <button type="button" class="link-btn" data-download="${r.id}">Baixar novamente</button>
+        <button type="button" class="link-btn" data-download="${r.id}">Visualizar PDF</button>
         <button type="button" class="link-btn del" data-del-report="${r.id}">Excluir</button>
       </div>
     `;
@@ -258,7 +295,7 @@ async function loadReports() {
         });
       } finally {
         btn.disabled = false;
-        btn.textContent = 'Baixar novamente';
+        btn.textContent = 'Visualizar PDF';
       }
     });
   });

@@ -138,6 +138,21 @@
     </div>
   </div>
 
+  <!-- Modal: Pré-visualização do PDF -->
+  <div id="pdf-preview-modal" class="modal-overlay" hidden>
+    <div class="modal modal-large">
+      <div class="modal-header">
+        <h2>Pré-visualização do relatório</h2>
+        <button type="button" id="btn-close-pdf-preview" class="btn-close">&times;</button>
+      </div>
+      <iframe id="pdf-preview-frame" class="pdf-preview-frame" title="Pré-visualização do PDF"></iframe>
+      <div class="pdf-preview-actions">
+        <button type="button" id="btn-close-pdf-preview-2" class="btn btn-outline">Fechar</button>
+        <button type="button" id="btn-download-preview" class="btn btn-primary">Baixar PDF</button>
+      </div>
+    </div>
+  </div>
+
   <!-- Container oculto usado para renderizar o relatório antes de exportar em PDF -->
   <div id="pdf-render-root"></div>
 
