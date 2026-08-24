@@ -2,7 +2,7 @@
 
 Sistema de atendimento de pacientes Dra. Camila Borges — geração automatizada do **Relatório Endodôntico** em PDF, mantendo exatamente o layout, as cores e a logo do modelo original.
 
-É um site **100% estático** (HTML, CSS e JavaScript puro, sem servidor/back-end), publicado no **GitHub Pages**. Tudo roda no navegador do usuário.
+É um site **100% estático** (HTML, CSS e JavaScript puro, sem servidor/back-end), publicado no **GitHub Pages**. Tudo roda no navegador do usuário. Os arquivos do site ficam na **raiz do repositório** (`index.html`, `styles.css`, `app.js` etc.) para que o GitHub Pages consiga servi-los diretamente.
 
 ## O que o sistema faz
 
@@ -26,16 +26,22 @@ O PDF é gerado no navegador com [html2pdf.js](https://github.com/eKoopmans/html
 
 ## Publicação no GitHub Pages
 
-O deploy é automático via GitHub Actions (`.github/workflows/deploy-pages.yml`): a cada push na branch `main`, o conteúdo da pasta `public/` é publicado no GitHub Pages.
+Como o site é só HTML/CSS/JS na raiz do repositório, não é necessário nenhum passo de build — o GitHub Pages pode servir os arquivos diretamente da branch.
 
-**Passo único necessário no repositório** (feito pela interface do GitHub, não é possível via git): em *Settings → Pages → Build and deployment*, selecionar **Source: GitHub Actions**. Depois disso, o site fica disponível em `https://<usuario>.github.io/Sistema-Camila/`.
+Configuração necessária (feita uma única vez, pela interface do GitHub, em **Settings → Pages**):
+
+1. Em **Build and deployment → Source**, selecione **Deploy from a branch**.
+2. Em **Branch**, selecione `main` e a pasta **`/ (root)`**, depois clique em **Save**.
+
+Depois disso, a cada push em `main` o GitHub publica automaticamente a versão mais recente em `https://<usuario>.github.io/<repositorio>/`.
+
+> Se a página mostrar **404**, o motivo mais comum é o Source estar configurado para uma branch/pasta que não contém o `index.html` (por exemplo, apontando para uma branch de outra feature, ou para uma pasta diferente de `/ root`). Confira em Settings → Pages se o Source aponta para `main` / `/ (root)`.
 
 ## Rodar localmente
 
-Não é necessário instalar nada — é HTML/CSS/JS puro. Basta servir a pasta `public/` com qualquer servidor estático, por exemplo:
+Não é necessário instalar nada — é HTML/CSS/JS puro. Basta servir a raiz do projeto com qualquer servidor estático, por exemplo:
 
 ```bash
-cd public
 python3 -m http.server 8080
 ```
 
@@ -44,15 +50,13 @@ Acesse `http://localhost:8080`.
 ## Estrutura
 
 ```
-public/
-  index.html            # formulário e histórico
-  styles.css            # visual do app + template do relatório (layout original)
-  db.js                 # banco de dados local (IndexedDB) — clínicas e relatórios
-  report-template.js    # monta o HTML do relatório para exportação em PDF
-  app.js                # lógica do formulário, CRUD de clínicas e geração de PDF
-  assets/                # logo e ícones (recortes fiéis ao modelo original)
-.github/workflows/
-  deploy-pages.yml      # publica public/ no GitHub Pages a cada push em main
+index.html            # formulário e histórico
+styles.css             # visual do app + template do relatório (layout original)
+db.js                  # banco de dados local (IndexedDB) — clínicas e relatórios
+report-template.js     # monta o HTML do relatório para exportação em PDF
+app.js                 # lógica do formulário, CRUD de clínicas e geração de PDF
+assets/                 # logo e ícones (recortes fiéis ao modelo original)
+.nojekyll              # evita que o GitHub Pages processe o site como Jekyll
 ```
 
 ## Layout preservado
