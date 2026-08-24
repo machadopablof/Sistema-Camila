@@ -3,162 +3,168 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Sistema Camila — Relatório Endodôntico</title>
+<title>Dra. Camila Borges — Endodontia</title>
+<meta name="description" content="Dra. Camila Borges, Endodontista (CRO 13673/DF). Tratamento de canal, retratamento endodôntico e atendimento a clínicas parceiras." />
 <link rel="stylesheet" href="styles.css" />
 </head>
 <body>
-  <header class="app-header">
-    <img src="assets/header-navy.png" alt="Dra. Camila Borges" class="app-logo" />
+  <nav class="site-nav">
+    <div class="site-nav-inner">
+      <a href="#topo" class="site-nav-logo">
+        <img src="assets/header-navy.png" alt="Dra. Camila Borges" />
+      </a>
+      <button type="button" id="nav-toggle" class="site-nav-toggle" aria-label="Abrir menu">&#9776;</button>
+      <div class="site-nav-links" id="site-nav-links">
+        <a href="#sobre">Sobre</a>
+        <a href="#diferenciais">Diferenciais</a>
+        <a href="#casos">Casos</a>
+        <a href="#contato">Contato</a>
+        <a href="login.html" class="site-nav-restricted">Área restrita</a>
+      </div>
+    </div>
+  </nav>
+
+  <header id="topo" class="hero">
+    <div class="hero-inner">
+      <p class="hero-eyebrow">Endodontia · CRO 13673/DF</p>
+      <h1 class="hero-title">Dra. Camila Borges</h1>
+      <p class="hero-subtitle">
+        Tratamento e retratamento de canal com precisão técnica e atendimento humanizado —
+        atuando diretamente com clínicas parceiras em todo o Distrito Federal.
+      </p>
+      <div class="hero-cta">
+        <a href="#contato" class="btn btn-primary">Fale comigo</a>
+        <a href="#casos" class="btn btn-outline btn-outline-dark">Ver casos</a>
+      </div>
+    </div>
   </header>
-  <div class="gold-bar"></div>
 
-  <main class="container">
-    <h1 class="page-title">Gerador de Relatório Endodôntico</h1>
-    <p class="page-subtitle">Preencha os dados abaixo para gerar o PDF no layout padrão. Tudo é processado no seu navegador — nenhum dado é enviado para um servidor.</p>
+  <main>
+    <section id="sobre" class="site-section">
+      <div class="site-section-inner site-section-split">
+        <div class="about-photo-placeholder" aria-hidden="true">
+          <span>Foto da Dra. Camila</span>
+        </div>
+        <div>
+          <p class="site-eyebrow">Sobre</p>
+          <h2 class="site-heading">Cuidado técnico, do diagnóstico ao acompanhamento</h2>
+          <p class="site-text">
+            <!-- Substitua por uma bio real da Dra. Camila: formação, especializações, tempo de atuação, abordagem clínica. -->
+            A Dra. Camila Borges é cirurgiã-dentista especialista em Endodontia, com atuação focada em
+            tratamentos de canal, retratamentos e cirurgia paraendodôntica. Atende em parceria com
+            clínicas odontológicas, oferecendo suporte técnico especializado para casos que exigem
+            cuidado endodôntico apurado.
+          </p>
+          <p class="site-text">
+            <!-- Espaço para diferenciais pessoais, formação acadêmica, cursos, associações. -->
+            Trabalha com equipamentos e técnicas atualizadas, priorizando conforto do paciente e
+            previsibilidade nos resultados de cada tratamento.
+          </p>
+        </div>
+      </div>
+    </section>
 
-    <form id="report-form" class="card">
-      <section class="field-group">
-        <div class="field-group-header">
-          <img src="assets/pin_icon.png" class="field-icon" alt="" />
-          <div>
-            <label class="field-title">Clínica / Dr(a). responsável</label>
-            <span class="field-hint">Selecione uma clínica salva ou cadastre uma nova.</span>
+    <section id="diferenciais" class="site-section site-section-alt">
+      <div class="site-section-inner">
+        <p class="site-eyebrow" style="text-align:center;">Diferenciais</p>
+        <h2 class="site-heading" style="text-align:center;">Como a Dra. Camila pode ajudar sua clínica</h2>
+
+        <div class="features-grid">
+          <div class="feature-card">
+            <div class="feature-icon">🦷</div>
+            <h3>Tratamento de canal</h3>
+            <p>Procedimentos endodônticos completos, com foco em precisão e conforto do paciente.</p>
           </div>
-          <button type="button" id="btn-manage-clinics" class="btn btn-outline">
-            Gerenciar clínicas
-          </button>
-        </div>
-
-        <div class="field-row">
-          <select id="clinic-select" class="input">
-            <option value="">— Selecionar clínica salva —</option>
-          </select>
-        </div>
-
-        <div class="field-row field-row-2">
-          <div>
-            <label class="input-label">Nome da clínica</label>
-            <input type="text" id="nome_clinica" class="input" required placeholder="Ex: Clínica Odonto Vida" />
+          <div class="feature-card">
+            <div class="feature-icon">🔁</div>
+            <h3>Retratamento endodôntico</h3>
+            <p>Reintervenção em casos de insucesso de tratamentos anteriores, com avaliação criteriosa.</p>
           </div>
-          <div>
-            <label class="input-label">Dr(a). responsável</label>
-            <input type="text" id="responsavel" class="input" required placeholder="Ex: Dra. Camila Borges" />
+          <div class="feature-card">
+            <div class="feature-icon">✂️</div>
+            <h3>Cirurgia paraendodôntica</h3>
+            <p>Procedimentos cirúrgicos complementares quando o tratamento convencional não é suficiente.</p>
+          </div>
+          <div class="feature-card">
+            <div class="feature-icon">🤝</div>
+            <h3>Parceria com clínicas</h3>
+            <p>Atendimento a pacientes encaminhados por clínicas parceiras, com relatório técnico detalhado de cada caso.</p>
           </div>
         </div>
-      </section>
+      </div>
+    </section>
 
-      <section class="field-group">
-        <div class="field-group-header">
-          <img src="assets/person_icon.png" class="field-icon" alt="" />
-          <div>
-            <label class="field-title">Paciente</label>
-            <span class="field-hint">Nome completo do paciente.</span>
-          </div>
+    <section id="casos" class="site-section">
+      <div class="site-section-inner">
+        <p class="site-eyebrow" style="text-align:center;">Casos</p>
+        <h2 class="site-heading" style="text-align:center;">Alguns casos acompanhados</h2>
+        <p class="site-text" style="text-align:center; max-width:560px; margin-left:auto; margin-right:auto;">
+          <!-- Substitua os cards abaixo por casos reais (com autorização do paciente), incluindo fotos/radiografias. -->
+          Espaço reservado para apresentação de casos clínicos reais. Adicione fotos (com autorização do
+          paciente), radiografias e uma breve descrição de cada procedimento.
+        </p>
+
+        <div class="cases-grid">
+          <article class="case-card">
+            <div class="case-photo-placeholder"><span>Foto do caso</span></div>
+            <h3>Retratamento endodôntico</h3>
+            <p>Breve descrição do caso, procedimento realizado e resultado.</p>
+          </article>
+          <article class="case-card">
+            <div class="case-photo-placeholder"><span>Foto do caso</span></div>
+            <h3>Tratamento de canal</h3>
+            <p>Breve descrição do caso, procedimento realizado e resultado.</p>
+          </article>
+          <article class="case-card">
+            <div class="case-photo-placeholder"><span>Foto do caso</span></div>
+            <h3>Cirurgia paraendodôntica</h3>
+            <p>Breve descrição do caso, procedimento realizado e resultado.</p>
+          </article>
         </div>
-        <div class="field-row">
-          <input type="text" id="paciente" class="input" required placeholder="Nome do paciente" />
+      </div>
+    </section>
+
+    <section id="contato" class="site-section site-section-alt">
+      <div class="site-section-inner site-section-split">
+        <div>
+          <p class="site-eyebrow">Contato</p>
+          <h2 class="site-heading">Vamos conversar sobre o seu caso</h2>
+          <p class="site-text">
+            Clínicas parceiras e pacientes podem entrar em contato pelos canais abaixo.
+            <!-- Substitua pelos dados reais de contato. -->
+          </p>
+          <ul class="contact-list">
+            <li>📞 <a href="tel:+5561999999999">(61) 99999-9999</a></li>
+            <li>✉️ <a href="mailto:contato@dracamilaborges.com.br">contato@dracamilaborges.com.br</a></li>
+            <li>📷 <a href="https://instagram.com" target="_blank" rel="noopener">@dracamilaborges</a></li>
+            <li>📍 Brasília/DF</li>
+          </ul>
+          <a href="https://wa.me/5561999999999" target="_blank" rel="noopener" class="btn btn-primary">
+            Falar no WhatsApp
+          </a>
         </div>
-      </section>
-
-      <section class="field-group">
-        <label class="field-title">Descrição do caso</label>
-        <textarea id="descricao" class="input textarea" rows="8" placeholder="Descreva o caso do paciente..."></textarea>
-      </section>
-
-      <section class="field-group">
-        <label class="field-title">Imagens</label>
-        <span class="field-hint">Anexe uma ou mais imagens do caso (radiografias, fotos clínicas, etc).</span>
-        <input type="file" id="imagens" class="input" accept="image/*" multiple />
-        <div id="image-preview" class="image-preview"></div>
-      </section>
-
-      <div id="form-error" class="form-error" hidden></div>
-
-      <button type="submit" id="btn-generate" class="btn btn-primary btn-block">
-        Gerar PDF
-      </button>
-    </form>
-
-    <section class="card">
-      <h2 class="section-heading">Relatórios gerados</h2>
-      <div id="reports-list" class="reports-list">
-        <p class="empty-hint">Nenhum relatório gerado ainda.</p>
+        <div class="cro-card">
+          <img src="assets/header-navy.png" alt="Dra. Camila Borges" />
+          <p>CRO 13673/DF</p>
+          <p class="cro-card-hint">Especialista em Endodontia</p>
+        </div>
       </div>
     </section>
   </main>
 
-  <!-- Modal: Gerenciar clínicas -->
-  <div id="clinic-modal" class="modal-overlay" hidden>
-    <div class="modal">
-      <div class="modal-header">
-        <h2>Clínicas cadastradas</h2>
-        <button type="button" id="btn-close-modal" class="btn-close">&times;</button>
-      </div>
+  <footer class="site-footer">
+    <p>© <span id="footer-year"></span> Dra. Camila Borges — Endodontista · CRO 13673/DF</p>
+    <a href="login.html">Área restrita</a>
+  </footer>
 
-      <table class="clinic-table">
-        <thead>
-          <tr>
-            <th>Clínica</th>
-            <th>Responsável</th>
-            <th>CRO</th>
-            <th></th>
-          </tr>
-        </thead>
-        <tbody id="clinic-table-body"></tbody>
-      </table>
-
-      <form id="clinic-form" class="clinic-form">
-        <h3 id="clinic-form-title">Nova clínica</h3>
-        <input type="hidden" id="clinic-id" />
-        <div class="field-row field-row-2">
-          <div>
-            <label class="input-label">Nome da clínica *</label>
-            <input type="text" id="cf-nome_clinica" class="input" required />
-          </div>
-          <div>
-            <label class="input-label">Dr(a). responsável *</label>
-            <input type="text" id="cf-responsavel" class="input" required />
-          </div>
-        </div>
-        <div class="field-row field-row-2">
-          <div>
-            <label class="input-label">CRO</label>
-            <input type="text" id="cf-cro" class="input" placeholder="Ex: 13673/DF" />
-          </div>
-          <div>
-            <label class="input-label">Endereço</label>
-            <input type="text" id="cf-endereco" class="input" />
-          </div>
-        </div>
-        <div class="clinic-form-actions">
-          <button type="button" id="btn-clinic-cancel-edit" class="btn btn-outline" hidden>Cancelar edição</button>
-          <button type="submit" class="btn btn-primary">Salvar clínica</button>
-        </div>
-      </form>
-    </div>
-  </div>
-
-  <!-- Modal: Pré-visualização do PDF -->
-  <div id="pdf-preview-modal" class="modal-overlay" hidden>
-    <div class="modal modal-large">
-      <div class="modal-header">
-        <h2>Pré-visualização do relatório</h2>
-        <button type="button" id="btn-close-pdf-preview" class="btn-close">&times;</button>
-      </div>
-      <iframe id="pdf-preview-frame" class="pdf-preview-frame" title="Pré-visualização do PDF"></iframe>
-      <div class="pdf-preview-actions">
-        <button type="button" id="btn-close-pdf-preview-2" class="btn btn-outline">Fechar</button>
-        <button type="button" id="btn-download-preview" class="btn btn-primary">Baixar PDF</button>
-      </div>
-    </div>
-  </div>
-
-  <!-- Container oculto usado para renderizar o relatório antes de exportar em PDF -->
-  <div id="pdf-render-root"></div>
-
-  <script src="https://cdn.jsdelivr.net/npm/html2pdf.js@0.14.0/dist/html2pdf.bundle.min.js"></script>
-  <script src="db.js"></script>
-  <script src="report-template.js"></script>
-  <script src="app.js"></script>
+  <script>
+    document.getElementById('footer-year').textContent = new Date().getFullYear();
+    document.getElementById('nav-toggle').addEventListener('click', () => {
+      document.getElementById('site-nav-links').classList.toggle('open');
+    });
+    document.querySelectorAll('.site-nav-links a').forEach((a) => {
+      a.addEventListener('click', () => document.getElementById('site-nav-links').classList.remove('open'));
+    });
+  </script>
 </body>
 </html>

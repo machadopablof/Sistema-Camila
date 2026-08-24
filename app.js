@@ -352,5 +352,15 @@ document.getElementById('report-form').addEventListener('submit', async (e) => {
 
 // ---------- Init ----------
 
-loadClinics();
-loadReports();
+(async () => {
+  const session = await requireAuth();
+  if (!session) return; // requireAuth já redirecionou para login.html
+
+  const userEmailEl = document.getElementById('user-email');
+  if (userEmailEl) userEmailEl.textContent = session.user.email;
+
+  loadClinics();
+  loadReports();
+})();
+
+document.getElementById('btn-logout')?.addEventListener('click', logout);
