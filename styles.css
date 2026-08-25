@@ -382,14 +382,14 @@ body {
   border-bottom: 3px solid var(--gold);
 }
 .site-nav-inner {
-  max-width: 1080px;
-  margin: 0 auto;
-  padding: 10px 20px;
+  width: 100%;
+  padding: 8px 24px;
   display: flex;
   align-items: center;
   justify-content: space-between;
 }
-.site-nav-logo img { height: 46px; display: block; }
+.site-nav-logo { margin-right: auto; min-width: 0; flex-shrink: 1; }
+.site-nav-logo img { display: block; height: auto; max-height: 64px; width: auto; max-width: 100%; }
 .site-nav-toggle {
   display: none;
   background: none;
@@ -501,11 +501,17 @@ body {
 .cro-card {
   background: var(--navy);
   border-radius: 16px;
-  padding: 40px 24px;
+  padding: 44px 28px;
   text-align: center;
   color: #fff;
 }
-.cro-card img { height: 70px; margin-bottom: 18px; }
+.cro-card img {
+  display: block;
+  width: 100%;
+  max-width: 400px;
+  height: auto;
+  margin: 0 auto 20px;
+}
 .cro-card p { margin: 4px 0; font-weight: 700; }
 .cro-card-hint { font-weight: 400 !important; color: #b9b9cf; font-size: 13.5px; }
 
