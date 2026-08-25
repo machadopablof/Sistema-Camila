@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Gerador de Relatório — Área Restrita</title>
+<link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <header class="app-header">
+    <img src="assets/header-navy.png" alt="Dra. Camila Borges" class="app-logo" />
+  </header>
+  <div class="gold-bar"></div>
+
+  <div class="account-bar">
+    <a href="index.html" class="account-bar-link">&larr; Site</a>
+    <span class="account-bar-email" id="user-email"></span>
+    <button type="button" id="btn-logout" class="account-bar-link account-bar-logout">Sair</button>
+  </div>
+
+  <main class="container">
+    <h1 class="page-title">Gerador de Relatório Endodôntico</h1>
+    <p class="page-subtitle">Preencha os dados abaixo para gerar o PDF no layout padrão. Os dados de clínicas e o histórico ficam salvos na sua conta.</p>
+
+    <form id="report-form" class="card">
+      <section class="field-group">
+        <div class="field-group-header">
+          <img src="assets/pin_icon.png" class="field-icon" alt="" />
+          <div>
+            <label class="field-title">Clínica / Dr(a). responsável</label>
+            <span class="field-hint">Selecione uma clínica salva ou cadastre uma nova.</span>
+          </div>
+          <button type="button" id="btn-manage-clinics" class="btn btn-outline">
+            Gerenciar clínicas
+          </button>
+        </div>
+
+        <div class="field-row">
+          <select id="clinic-select" class="input">
+            <option value="">— Selecionar clínica salva —</option>
+          </select>
+        </div>
+
+        <div class="field-row field-row-2">
+          <div>
+            <label class="input-label">Nome da clínica</label>
+            <input type="text" id="nome_clinica" class="input" required placeholder="Ex: Clínica Odonto Vida" />
+          </div>
+          <div>
+            <label class="input-label">Dr(a). responsável</label>
+            <input type="text" id="responsavel" class="input" required placeholder="Ex: Dra. Camila Borges" />
+          </div>
+        </div>
+      </section>
+
+      <section class="field-group">
+        <div class="field-group-header">
+          <img src="assets/person_icon.png" class="field-icon" alt="" />
+          <div>
+            <label class="field-title">Paciente</label>
+            <span class="field-hint">Nome completo do paciente.</span>
+          </div>
+        </div>
+        <div class="field-row">
+          <input type="text" id="paciente" class="input" required placeholder="Nome do paciente" />
+        </div>
+      </section>
+
+      <section class="field-group">
+        <label class="field-title">Descrição do caso</label>
+        <textarea id="descricao" class="input textarea" rows="8" placeholder="Descreva o caso do paciente..."></textarea>
+      </section>
+
+      <section class="field-group">
+        <label class="field-title">Imagens</label>
+        <span class="field-hint">Anexe uma ou mais imagens do caso (radiografias, fotos clínicas, etc).</span>
+        <input type="file" id="imagens" class="input" accept="image/*" multiple />
+        <div id="image-preview" class="image-preview"></div>
+      </section>
+
+      <div id="form-error" class="form-error" hidden></div>
+
+      <button type="submit" id="btn-generate" class="btn btn-primary btn-block">
+        Gerar PDF
+      </button>
+    </form>
+
+    <section class="card">
+      <h2 class="section-heading">Relatórios gerados</h2>
+      <div id="reports-list" class="reports-list">
+        <p class="empty-hint">Nenhum relatório gerado ainda.</p>
+      </div>
+    </section>
+  </main>
+
+  <!-- Modal: Gerenciar clínicas -->
+  <div id="clinic-modal" class="modal-overlay" hidden>
+    <div class="modal">
+      <div class="modal-header">
+        <h2>Clínicas cadastradas</h2>
+        <button type="button" id="btn-close-modal" class="btn-close">&times;</button>
+      </div>
+
+      <table class="clinic-table">
+        <thead>
+          <tr>
+            <th>Clínica</th>
+            <th>Responsável</th>
+            <th>CRO</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody id="clinic-table-body"></tbody>
+      </table>
+
+      <form id="clinic-form" class="clinic-form">
+        <h3 id="clinic-form-title">Nova clínica</h3>
+        <input type="hidden" id="clinic-id" />
+        <div class="field-row field-row-2">
+          <div>
+            <label class="input-label">Nome da clínica *</label>
+            <input type="text" id="cf-nome_clinica" class="input" required />
+          </div>
+          <div>
+            <label class="input-label">Dr(a). responsável *</label>
+            <input type="text" id="cf-responsavel" class="input" required />
+          </div>
+        </div>
+        <div class="field-row field-row-2">
+          <div>
+            <label class="input-label">CRO</label>
+            <input type="text" id="cf-cro" class="input" placeholder="Ex: 13673/DF" />
+          </div>
+          <div>
+            <label class="input-label">Endereço</label>
+            <input type="text" id="cf-endereco" class="input" />
+          </div>
+        </div>
+        <div class="clinic-form-actions">
+          <button type="button" id="btn-clinic-cancel-edit" class="btn btn-outline" hidden>Cancelar edição</button>
+          <button type="submit" class="btn btn-primary">Salvar clínica</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Modal: Pré-visualização do PDF -->
+  <div id="pdf-preview-modal" class="modal-overlay" hidden>
+    <div class="modal modal-large">
+      <div class="modal-header">
+        <h2>Pré-visualização do relatório</h2>
+        <button type="button" id="btn-close-pdf-preview" class="btn-close">&times;</button>
+      </div>
+      <iframe id="pdf-preview-frame" class="pdf-preview-frame" title="Pré-visualização do PDF"></iframe>
+      <div class="pdf-preview-actions">
+        <button type="button" id="btn-close-pdf-preview-2" class="btn btn-outline">Fechar</button>
+        <button type="button" id="btn-download-preview" class="btn btn-primary">Baixar PDF</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Container oculto usado para renderizar o relatório antes de exportar em PDF -->
+  <div id="pdf-render-root"></div>
+
+  <script src="https://cdn.jsdelivr.net/npm/html2pdf.js@0.14.0/dist/html2pdf.bundle.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="supabase-config.js"></script>
+  <script src="auth.js"></script>
+  <script src="supabase-db.js"></script>
+  <script src="report-template.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
